@@ -8,6 +8,7 @@ app.use(parser.json())
 
 app.post("/todo", async (req, res)=>{
     const payload = TodoParser.safeParse(req.body)
+    console.log(req.body)
     if(!payload.success){
         res.status(400).json({message:"incorrect request body for todo"})
         return;
@@ -29,16 +30,17 @@ app.get("/todos", async (req, res)=>{
 })
 
 app.put("/completed", async (req, res)=>{
-    const paylaod = CompletedParser.safeParse(req.body)
-    if(!paylaod.success){
+    const payload = CompletedParser.safeParse(req.body)
+    if(!payload.success){
         res.status(400).json({message:"incorrect request body to mark completed"})
         return;
     }
 
-    const todo = await Todo.findOne({_id:paylaod.id})
+    const todo = await Todo.findOne({_id:payload.data.id})
+    console.log(payload.data.id)
     if(todo){
         await Todo.updateOne({
-            _id:paylaod.id
+            _id:payload.data.id
         }, {
             completed:true
         })
